@@ -113,6 +113,12 @@
       "name": "Yambe",
       "email": "rrobiouj@adobe.com",
       "phone": "(123)123-1312"
+    },
+    {
+      "name": "aa",
+      "email": "aa",
+      "phone": "0000  123-4567",
+      "id": 21
     }
   ],
   "invoices": [
@@ -529,6 +535,15 @@
       "hours": 38,
       "rate": 25,
       "paid": false
+    },
+    {
+      "id": 51,
+      "service": "Cleaning",
+      "customerId": 2,
+      "rate": 3,
+      "hours": 2.75,
+      "date": "2018-07-26T21:00:00.000Z",
+      "paid": true
     }
   ]
 }

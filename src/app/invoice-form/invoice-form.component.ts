@@ -6,17 +6,20 @@ import { InvoicesService, Invoice, CustomersService, Customer } from '@aia/servi
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/combineLatest';
 
+import { HoursValidator } from "../validators/hours.validator"
+
 @Component({
   selector: 'app-invoice-form',
   templateUrl: './invoice-form.component.html',
   styleUrls: ['./invoice-form.component.css']
 })
 export class InvoiceFormComponent implements OnInit {
-  invoiceForm: FormGroup;
-  invoice: Invoice;
-  customer: Customer;
-  customers: Customer[];
-  total = 0;
+  public invoiceForm: FormGroup;
+  public invoice: Invoice;
+  public customer: Customer;
+  // This is the data source for "Customer" select element.
+  public customers: Customer[];
+  public total = 0;
 
   constructor(
     private loadingService: TdLoadingService,
@@ -26,9 +29,17 @@ export class InvoiceFormComponent implements OnInit {
     private customersService: CustomersService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute) {
-
+      this.invoiceForm = this.formBuilder.group({
+        id: [""],
+        service: ["", Validators.required],
+        customerId: ["", Validators.required],
+        rate: ["", Validators.required],
+        hours: ["", [ Validators.required, HoursValidator ]], // the second argument for the form control is a synchronous validator list.
+        date: ["", Validators.required],
+        paid: [""]
+      })
     }
-
+    
   ngOnInit() {
     this.loadingService.register('invoice');
     this.loadingService.register('customers');
@@ -41,6 +52,7 @@ export class InvoiceFormComponent implements OnInit {
     this.route.params.map((params: Params) => params.invoiceId).subscribe(invoiceId => {
       if (invoiceId) {
         this.invoicesService.get<Invoice>(invoiceId).subscribe(invoice => {
+          this.invoiceForm.setValue(invoice); // Sets the FormGroup based on the model using control names as keys.
           this.invoice = invoice;
           this.loadingService.resolve('invoice');
         });
@@ -49,15 +61,21 @@ export class InvoiceFormComponent implements OnInit {
         this.loadingService.resolve('invoice');
       }
     });
+
+    // Subscrive to valueChanges observables from 'hours' and 'rate' controls.
+    Observable.combineLatest(
+      this.invoiceForm.get("rate").valueChanges,
+      this.invoiceForm.get("hours").valueChanges).subscribe(([rate = 0, hours = 0]) =>
+        this.total = rate * hours);
   }
 
   save() {
     if (this.invoice.id) {
-      this.invoicesService.update<Invoice>(this.invoice.id, this.invoice).subscribe(response => {
+      this.invoicesService.update<Invoice>(this.invoice.id, this.invoiceForm.value).subscribe(response => {
         this.viewInvoice(response.id);
       });
     } else {
-      this.invoicesService.create<Invoice>(this.invoice).subscribe(response => {
+      this.invoicesService.create<Invoice>(this.invoiceForm.value).subscribe(response => {
         this.viewInvoice(response.id);
       });
     }
