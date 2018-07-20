@@ -133,11 +133,11 @@
     },
     {
       "id": 4,
+      "service": "Cleaning",
       "customerId": 8,
-      "date": "2016-12-08T05:48:44Z",
-      "service": "Publications",
-      "hours": 69,
-      "rate": 75,
+      "rate": 1,
+      "hours": 1,
+      "date": "2018-07-27T21:00:00.000Z",
       "paid": false
     },
     {

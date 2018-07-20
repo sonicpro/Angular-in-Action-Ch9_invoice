@@ -6,7 +6,7 @@ import { InvoicesService, Invoice, CustomersService, Customer } from '@aia/servi
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/combineLatest';
 
-import { HoursValidator } from "../validators/hours.validator"
+import { HoursValidator } from '../validators/hours.validator';
 
 @Component({
   selector: 'app-invoice-form',
@@ -34,10 +34,10 @@ export class InvoiceFormComponent implements OnInit {
         service: ["", Validators.required],
         customerId: ["", Validators.required],
         rate: ["", Validators.required],
-        hours: ["", [ Validators.required, HoursValidator ]], // the second argument for the form control is a synchronous validator list.
+        hours: ["", [Validators.required, HoursValidator]],
         date: ["", Validators.required],
         paid: [""]
-      })
+      });
     }
     
   ngOnInit() {
@@ -65,8 +65,9 @@ export class InvoiceFormComponent implements OnInit {
     // Subscrive to valueChanges observables from 'hours' and 'rate' controls.
     Observable.combineLatest(
       this.invoiceForm.get("rate").valueChanges,
-      this.invoiceForm.get("hours").valueChanges).subscribe(([rate = 0, hours = 0]) =>
-        this.total = rate * hours);
+      this.invoiceForm.get("hours").valueChanges).subscribe(([rate = 0, hours = 0]) => {
+        this.total = rate * hours;
+      });
   }
 
   save() {
